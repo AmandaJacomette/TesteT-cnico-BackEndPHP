@@ -52,12 +52,12 @@ class apiController extends Controller
                     if($identificador !=  $voo['price']){
                         foreach($grupo['Voos'] as $voo2){
                             if($voo['price'] == $voo2['price'] && $voo['outbound'] == $voo2['outbound']){
-                                array_push($group, $voo2);
+                                array_push($group, $voo2['id']);
                             } else if($voo['price'] == $voo2['price'] && $voo['outbound'] != $voo2['outbound']){
                                 if($identi !=  $voo2['price']){
                                     foreach($grupo['Voos'] as $voo3){
                                         if($voo2['price'] == $voo3['price'] && $voo2['outbound'] == $voo3['outbound']){
-                                            array_push($group2, $voo3);
+                                            array_push($group2, $voo3['id']);
                                         }
                                     }
                                 }
@@ -93,57 +93,77 @@ class apiController extends Controller
       return $groups;
     }
 
-    public function groupFlights() {
+    private function groupFlights() {
       $groupsPrice = apiController::groupFlightsByPriceAndOutIn();
       $groups = array();
       $group = array();
       $idGroup = 1;
-      $id = 0;
-      $identificador = 'Primeiro';
-      //foreach($groupsPrice as $g){
       
       foreach($groupsPrice as $grupo){
             if($grupo['outbound']){
                 $grupoOut = $grupo['Voos'];
+            } else{
+                continue;
             }
-            while($id<15){
-                foreach($groupsPrice as $grupo2){
-                    $id++;
-                    if(!$grupo2['outbound'] && $grupo2['FareId'] == $grupo['FareId']){
-                        $grupoIn = $grupo2['Voos'];
-                        $totalGrupo = $grupo['price'] + $grupo2['price'];
-                        //continue;
-                    }
-                }
-                array_push($groups, array('uniqueId' =>  $idGroup,
+            foreach($groupsPrice as $grupo2){
+                 if(!$grupo2['outbound'] && $grupo2['FareId'] == $grupo['FareId']){
+                     $grupoIn = $grupo2['Voos'];
+                     $totalGrupo = $grupo['price'] + $grupo2['price'];
+                     array_push($groups, array('uniqueId' =>  $idGroup,
                                     'totalPrice' => $totalGrupo,
                                     'outbound' => $grupoOut,
                                     'inbound' => $grupoIn
                                     )
-                );
-                $idGroup++;
+                     );
+                     $idGroup++;
+                 }
             }
-      //}
       }
-       /*     $idPrice = $grupo['price'];
-            if($grupo['price'] == $idPrice){
-                
-                foreach($grupo['Voos'] as $voo){
-                    if($identificador !=  $voo['outbound'] && $idPrice == $grupo['price']){
-                        foreach($grupo['Voos'] as $voo2){
-                            if($voo['outbound'] == $voo2['outbound'] ){
-                                array_push($group, $voo2);
-                            }
-                        }
-                        $group = array();
-                    }
-                    $identificador = $voo['outbound'];
-                }
-                //$idGroup++;
-                $idPrice = $grupo['price'];
-            }   
-      }*/
-      return response()->json($groups, 200);
+      return $groups;
+    }
+
+    private function orderByPrice() {
+      $groups = apiController::groupFlights();
+      $result = array();
+      $result = collect($groups)->sortBy('totalPrice');
+      
+      return $result;
+    }
+
+    
+
+    private function cheapestPrice() {
+      $groups = apiController::groupFlights();
+      $cheapestGroup = array();
+      $menorPreco = 1000000000;
+      
+      foreach($groups as $grupo){
+            if($grupo['totalPrice']<$menorPreco){
+                $menorPreco = $grupo['totalPrice'];
+                $idMenorPreco = $grupo['uniqueId'];
+            }
+      }
+      $cheapestGroup = array('uniqueId' => $idMenorPreco, 'price' => $menorPreco);
+      return $cheapestGroup;
+    }
+
+    public function result() {
+      $groups = apiController::orderByPrice();
+      $voos = apiController::getAllFlights();
+      $menorPreco = apiController::cheapestPrice();
+      
+      $result = array();
+
+      array_push($result, array('flights' =>  $voos,
+                                'groups' => $groups,
+                                'totalGroups' => count($groups),
+                                'totalFlights' => count($voos),
+                                'cheapestPrice' => $menorPreco['price'],
+                                'cheapestGroup' => $menorPreco['uniqueId']
+                                    )
+                     );
+      
+      return response()->json($result, 200);
     }
       
 }

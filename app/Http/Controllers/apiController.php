@@ -127,17 +127,19 @@ class apiController extends Controller
     private function orderByPrice() {
       $groups = apiController::groupFlights();
       $result = array();
+      $idGroup = 1;
+
       $array = collect($groups)->sortBy('totalPrice');
 
       foreach($array as $grupo){
+            $grupo['uniqueId'] = $idGroup;
             array_push($result, $grupo);
+            $idGroup++;
       }
       
       return $result;
     }
-
     
-
     private function cheapestPrice() {
       $groups = apiController::orderByPrice();
       $cheapestGroup = array();

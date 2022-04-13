@@ -15,10 +15,11 @@ class apiController extends Controller
 
     private function groupFlightsByFare() {
       $voos = apiController::getAllFlights();
-      $groups = array();
+      $groupsResult = array();
       $group = array();
-      $idGroup = 1;
+      $idFareGroup = 1;
       $identificador = 'Primeiro';
+
       foreach($voos as $voo){
         if($identificador !=  $voo['fare']){
             foreach($voos as $voo2){
@@ -26,26 +27,27 @@ class apiController extends Controller
                     array_push($group, $voo2);
                 } 
             }
-            array_push($groups, array('FareId' => $idGroup, 'Fare' => $voo['fare'], 'Voos' => $group));
+            array_push($groupsResult, array('FareId' => $idFareGroup, 'Fare' => $voo['fare'], 'Voos' => $group));
             $group = array();
-            $idGroup++;
+            $idFareGroup++;
         }
 
         $identificador = $voo['fare'];
       }
       
-      return $groups;
+      return $groupsResult;
     }
 
     
     private function groupFlightsByPriceAndOutIn() {
       $groupsFare = apiController::groupFlightsByFare();
-      $groups = array();
+      $groupsResult = array();
       $group = array();
-      //$group2 = array();
+      $group2 = array();
       $idGroup = 1;
       $identificador = 'Primeiro';
-      $identi = 'Primeiro';
+      $identificador2 = 'Primeiro';
+
       foreach($groupsFare as $grupo){
             while($grupo['FareId'] == $idGroup){
                 foreach($grupo['Voos'] as $voo){
@@ -54,18 +56,18 @@ class apiController extends Controller
                             if($voo['price'] == $voo2['price'] && $voo['outbound'] == $voo2['outbound']){
                                 array_push($group, $voo2['id']);
                             } else if($voo['price'] == $voo2['price'] && $voo['outbound'] != $voo2['outbound']){
-                                if($identi !=  $voo2['price']){
+                                if($identificador2 !=  $voo2['price']){
                                     foreach($grupo['Voos'] as $voo3){
                                         if($voo2['price'] == $voo3['price'] && $voo2['outbound'] == $voo3['outbound']){
                                             array_push($group2, $voo3['id']);
                                         }
                                     }
                                 }
-                               $identi = $voo2['price'];
+                               $identificador2 = $voo2['price'];
                             }
                         }
                         if(!empty($group)){
-                           array_push($groups, array('FareId' => $grupo['FareId'],
+                           array_push($groupsResult, array('FareId' => $grupo['FareId'],
                                                     'Fare' => $grupo['Fare'],
                                                     'price' => $voo['price'],
                                                     'outbound' => $voo['outbound'],
@@ -74,7 +76,7 @@ class apiController extends Controller
                            );
                         }
                         if (!empty($group2)){
-                            array_push($groups, array('FareId' => $grupo['FareId'],
+                            array_push($groupsResult, array('FareId' => $grupo['FareId'],
                                                     'Fare' => $grupo['Fare'],
                                                     'price' => $voo['price'],
                                                     'outbound' => $voo['inbound'],
@@ -90,7 +92,7 @@ class apiController extends Controller
                 $idGroup++;
             }   
       }
-      return $groups;
+      return $groupsResult;
     }
 
     private function groupFlights() {
@@ -125,7 +127,11 @@ class apiController extends Controller
     private function orderByPrice() {
       $groups = apiController::groupFlights();
       $result = array();
-      $result = collect($groups)->sortBy('totalPrice');
+      $array = collect($groups)->sortBy('totalPrice');
+
+      foreach($array as $grupo){
+            array_push($result, $grupo);
+      }
       
       return $result;
     }
@@ -133,16 +139,15 @@ class apiController extends Controller
     
 
     private function cheapestPrice() {
-      $groups = apiController::groupFlights();
+      $groups = apiController::orderByPrice();
       $cheapestGroup = array();
-      $menorPreco = 1000000000;
       
       foreach($groups as $grupo){
-            if($grupo['totalPrice']<$menorPreco){
-                $menorPreco = $grupo['totalPrice'];
-                $idMenorPreco = $grupo['uniqueId'];
-            }
+             $idMenorPreco = $grupo['uniqueId'];
+             $menorPreco = $grupo['totalPrice'];
+             break;
       }
+
       $cheapestGroup = array('uniqueId' => $idMenorPreco, 'price' => $menorPreco);
       return $cheapestGroup;
     }
@@ -160,7 +165,7 @@ class apiController extends Controller
                                 'totalFlights' => count($voos),
                                 'cheapestPrice' => $menorPreco['price'],
                                 'cheapestGroup' => $menorPreco['uniqueId']
-                                    )
+                                )
                      );
       
       return response()->json($result, 200);

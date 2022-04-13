@@ -4,11 +4,12 @@
     "\\app",
     "\\app\\Http",
     "\\app\\Http\\Controllers",
+    "\\app\\Providers",
     "\\public",
     "\\resources",
     "\\resources\\views",
     "\\routes"
   ],
-  "SelectedNode": "\\routes\\api.php",
+  "SelectedNode": "\\app\\Providers\\AppServiceProvider.php",
   "PreviewInSolutionExplorer": false
 }

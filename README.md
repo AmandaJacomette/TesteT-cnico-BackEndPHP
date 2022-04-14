@@ -5,6 +5,7 @@ Este projeto é um teste técnico para a vaga de Desenvolvedor PHP. O teste cons
  - Preço
  - Se o voo é ida
  - Se o voo é volta
+ 
 E retorna os voos agrupados em formato JSON, e ordenados de forma crescente de acordo com o preço.
 
 

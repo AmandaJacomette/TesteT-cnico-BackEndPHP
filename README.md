@@ -26,11 +26,15 @@ Para realizar o teste localmente siga os seguintes passos:
 #### 2- Entre na pasta
   >SeuDiretirio\TesteTecnico-BackEndPHP
 
-#### 3- Inicie o artisan
+#### 3- Atualize o composer
+
+  `composer update`
+  
+#### 4- Inicie o artisan
 
   `php artisan serve`
 
-#### 4- Teste no postman ou derivados
+#### 5- Teste no postman ou derivados
   Basta entrar no postman com sua conta.
   
   Criar ou entrar em um workspace.

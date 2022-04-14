@@ -14,7 +14,9 @@ E retorna os voos agrupados em formato JSON, e ordenados de forma crescente de a
 
 ## Teste Local
 *Requisitos:*
+- Php
 - Laravel
+- Composer
 - Git
 
 Para realizar o teste localmente siga os seguintes passos:

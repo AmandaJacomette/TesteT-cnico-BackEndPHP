@@ -23,8 +23,8 @@ Para realizar o teste localmente siga os seguintes passos:
   
     `git clone https://github.com/AmandaJacomette/TesteTecnico-BackEndPHP.git`
   
-#### 2- Entre na pasta buscaVoos
-  >SeuDiretirio\TesteTecnico-BackEndPHP\buscaVoos
+#### 2- Entre na pasta
+  >SeuDiretirio\TesteTecnico-BackEndPHP
 
 #### 3- Inicie o artisan
 

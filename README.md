@@ -8,6 +8,9 @@ Este projeto é um teste técnico para a vaga de Desenvolvedor PHP. O teste cons
 E retorna os voos agrupados em formato JSON, e ordenados de forma crescente de acordo com o preço.
 
 
+## Documentação também disponível no Postman
+  https://documenter.getpostman.com/view/20420178/Uyr4JKSC
+
 ## Teste Local
 *Requisitos:*
 - Laravel

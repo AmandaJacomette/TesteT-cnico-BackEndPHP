@@ -28,7 +28,7 @@ Para realizar o teste localmente siga os seguintes passos:
 
 #### 3- Inicie o artisan
 
-  `php artisan server`
+  `php artisan serve`
 
 #### 4- Teste no postman ou derivados
   Basta entrar no postman com sua conta.
